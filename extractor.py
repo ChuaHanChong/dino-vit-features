@@ -24,7 +24,7 @@ class ViTExtractor:
     d - the embedding dimension in the ViT.
     """
 
-    def __init__(self, model_type: str = 'dino_vits8', stride: int = 4, model: nn.Module = None, device: str = 'cuda'):
+    def __init__(self, model_type: str = 'dino_vits8', stride: int = 4, model: nn.Module = None, device: str = 'cuda', patch_index: int = 1):
         """
         :param model_type: A string specifying the type of model to extract from.
                           [dino_vits8 | dino_vits16 | dino_vitb8 | dino_vitb16 | vit_small_patch8_224 |
@@ -53,6 +53,7 @@ class ViTExtractor:
         self.hook_handlers = []
         self.load_size = None
         self.num_patches = None
+        self.patch_index = patch_index
 
     @staticmethod
     def create_model(model_type: str) -> nn.Module:
@@ -292,7 +293,7 @@ class ViTExtractor:
         if facet == 'token':
             x.unsqueeze_(dim=1) #Bx1xtxd
         if not include_cls:
-            x = x[:, :, 1:, :]  # remove cls token
+            x = x[:, :, self.patch_index:, :]  # remove cls token
         else:
             assert not bin, "bin = True and include_cls = True are not supported together, set one of them False."
         if not bin:

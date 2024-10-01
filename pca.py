@@ -13,7 +13,7 @@ from typing import List, Tuple
 
 def pca(image_paths, load_size: int = 224, layer: int = 11, facet: str = 'key', bin: bool = False, stride: int = 4,
         model_type: str = 'dino_vits8', n_components: int = 4,
-        all_together: bool = True) -> List[Tuple[Image.Image, numpy.ndarray]]:
+        all_together: bool = True, extractor: ViTExtractor = None) -> List[Tuple[Image.Image, numpy.ndarray]]:
     """
     finding pca of a set of images.
     :param image_paths: a list of paths of all the images.
@@ -28,7 +28,8 @@ def pca(image_paths, load_size: int = 224, layer: int = 11, facet: str = 'key', 
     :return: a list of lists containing an image and its principal components.
     """
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    extractor = ViTExtractor(model_type, stride, device=device)
+    if extractor is None:
+        extractor = ViTExtractor(model_type, stride, device=device)
     descriptors_list = []
     image_pil_list = []
     num_patches_list = []
